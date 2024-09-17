@@ -38,11 +38,6 @@ k3d cluster create my-cluster --servers 1 --port 8080:80@loadbalancer
 
 Teraz aplikacja bedzie dostepna na porcie 8080 oczywiscie jezeli zajety mozna zmienic w komendzie na inny i dalej bedzie dzialac tylko na innym porcie.
 
-#```sh
-#helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-#helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
-#```
-
 ```sh
 helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
 helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
