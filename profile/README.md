@@ -58,18 +58,29 @@ kubectl apply -f sealed-secrets-key.yaml
 Zeby odpalic aplikacje trzeba uzyc podanych komend:
 
 ```sh
-helm install efarm-mysql .efarm-mysql/helm 
+helm install efarm-mysql ./efarm-mysql/helm 
 ```
 
 ```sh
-helm install efarm-backend .efarm-backend/helm 
+helm install efarm-backend ./efarm-backend/helm 
 ```
 
 ```sh
-helm install efarm-frontend .efarm-frontend/helm 
+helm install efarm-frontend ./efarm-frontend/helm 
 ```
 
+### Aktualizacja aplikacji przy uzyciu Helm
+Zeby usunac aplikacje gdy nie jest potrzebna np. dla backendu:
 
+```sh
+helm uninstall efarm-backend
+```
+
+Jezeli aplikacja ciagle byla zainstalowana i dzialala to zeby ja zaktualizaowac zeby uzywala najnowszego obrazu docker trzeba np. dla backendu:
+
+```sh
+helm upgrade efarm-backend ./efarm-backend/helm
+```
 
 
 ### Sprawdzenie statusu aplikacji
@@ -89,6 +100,12 @@ to znaczy ze jeszcze nie jest gotowe wiec albo powtorzyc komende albo sprawdzic 
 
 ```sh
 kubectl get pods
+```
+
+Zeby wejsc do konteneru tak jak to mozna z docker exec trzeba:
+
+```sh
+kubectl exec -it efarm-mysql -- mysql -u user -p efarm
 ```
 
 ### Zarzadzanie klastrem
