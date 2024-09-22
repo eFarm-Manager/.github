@@ -100,7 +100,7 @@ kubectl get pods
 Zeby wejsc do konteneru tak jak to mozna z docker exec trzeba:
 
 ```sh
-kubectl exec -it efarm-mysql -- mysql -u user -p efarm
+kubectl exec -it <pod-name> -- /bin/bash
 ```
 
 ### Zarzadzanie klastrem
