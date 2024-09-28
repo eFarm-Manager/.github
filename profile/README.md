@@ -1,4 +1,6 @@
-## Instrukcja na instalcje kubernetesa
+## Instrukcja na instalacje kubernetesa
+
+**Instalacja zostala przetestowana na linux oraz mac**
 
 zakladajac ze jest sie w folderze ../efarm i wszystkie repa sa w: 
 - ../efarm/efarm-backend 
@@ -9,10 +11,10 @@ zakladajac ze jest sie w folderze ../efarm i wszystkie repa sa w:
 - Docker
 - Kubectl
 - Helm
-- Dystrybucja kubernetes(k3d tutaj)
+- Dystrybucja kubernetes(k3d dla dev/staging setup, k3s w prod ale tutaj nie wazne)
 
 ### Instalacja Docker:
-tutaj pomijam instrukcje instalacji bo zakladam ze jest juz obecny
+tutaj pomijam instrukcje instalacji bo zakladam ze jest juz obecny. Jednak jest wazne poniewaz k3d to kubernetes w dockerze oznacza to zeby dzialalo docker musi dzialac.
 
 ### Instalacja Kubectl:
 - MacOS:
@@ -43,7 +45,7 @@ helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
 helm install sealed-secrets -n kube-system --set-string fullnameOverride=sealed-secrets-controller sealed-secrets/sealed-secrets
 ```
 
-Uzywajac pliku sealed-secret-key.yaml ktory nie jest w zadnym repo ale musi byc dodany zrobic samemu:
+Uzywajac pliku sealed-secret-key.yaml ktory nie jest w zadnym repo ale musi byc dodany zrobic samemu **uwaga zeby go nie dodac na github**:
 
 ```sh
 kubectl apply -f sealed-secrets-key.yaml
@@ -53,36 +55,31 @@ kubectl apply -f sealed-secrets-key.yaml
 Zeby odpalic aplikacje trzeba uzyc podanych komend:
 
 ```sh
-helm install efarm-mysql ./efarm-mysql/helm 
+kubectl apply -k ./efarm-mysql/kustomize/overlays/dev/
 ```
 
 ```sh
-helm install efarm-backend ./efarm-backend/helm 
+kubectl apply -k ./efarm-backend/kustomize/overlays/dev/
 ```
 
 ```sh
-helm install efarm-frontend ./efarm-frontend/helm 
+kubectl apply -k ./efarm-frontend/kustomize/overlays/dev/
 ```
 
 ### Aktualizacja aplikacji przy uzyciu Helm
-Zeby usunac aplikacje gdy nie jest potrzebna np. dla backendu:
+Zeby usunac aplikacje gdy nie jest potrzebna lub dla bezpieczenstwa zamiast od razu apply dla updatu np. dla backendu:
 
 ```sh
-helm uninstall efarm-backend
+kubectl delete -k ./efarm-frontend/kustomize/overlays/dev/
 ```
 
-Jezeli aplikacja ciagle byla zainstalowana i dzialala to zeby ja zaktualizaowac zeby uzywala najnowszego obrazu docker trzeba np. dla backendu:
-
-```sh
-helm upgrade efarm-backend ./efarm-backend/helm
-```
-
+Jezeli aplikacja ciagle byla zainstalowana i dzialala to zeby ja zaktualizaowac zeby uzywala najnowszego obrazu docker trzeba ponownie apply ale jak wczesniej powiedziane mozna najpierw delete a potem apply.
 
 ### Sprawdzenie statusu aplikacji
 Aby upewnic sie ze baza danych dziala mozna uzyc podanej komendy aby poczekac przez 120s na gotowosc zasobow:
 
 ```sh
-kubectl wait --for=condition=ready pod -l app=efarm-mysql --timeout=120s
+kubectl wait --for=condition=ready pod -l app=efarm-mysql -n mysql --timeout=240s
 ```
 
 Jezeli pojawi sie:
@@ -94,14 +91,16 @@ oznacza ze juz dziala
 to znaczy ze jeszcze nie jest gotowe wiec albo powtorzyc komende albo sprawdzic stan z komenda:
 
 ```sh
-kubectl get pods
+kubectl get pods -A | grep -v kube-system
 ```
 
 Zeby wejsc do konteneru tak jak to mozna z docker exec trzeba:
 
 ```sh
-kubectl exec -it <pod-name> -- /bin/bash
+kubectl exec -it -n <namespace> <pod-name> -- sh
 ```
+
+gdzie dostepne namespace to **mysql**, **backend**, **frontend** a pod name dla mysql to efarm-mysql-0 jednak dla backendu i frontendu jest rozne za kazdym apply
 
 ### Zarzadzanie klastrem
 
