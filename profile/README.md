@@ -1,10 +1,3 @@
-## Informacje o danych testowych
-- Uzytkownik o id 31 nie aktywny
-- Gospodarstwo o id 9 nie aktywne
-- Sprzet o id 23 nie aktywny
-- Dzialka o id 11 nie aktywna
-- Pole o id 7 nie aktywne
-
 ## Instrukcja na instalacje kubernetesa
 
 **Instalacja zostala przetestowana na linux oraz mac**
