@@ -51,7 +51,19 @@ Uzywajac pliku sealed-secret-key.yaml ktory nie jest w zadnym repo ale musi byc 
 kubectl apply -f sealed-secrets-key.yaml
 ```
 
-### Zarzadzanie aplikacja przy uzyciu Helm
+Zeby zaaplikowac nowy key trzeba usunac obecny pod dla controllera sealed-secrets mozna jego nazwe znalesc uzywajac polecenia:
+
+```sh
+kubectl get pod -n kube-system | grep sealed-secrets-controller
+```
+
+skopiowac nazwe i wtedy uzyc polecenia
+
+```sh
+kubectl delete pod -n kube-system <sealed-secrets-controller>
+```
+
+### Zarzadzanie aplikacja przy uzyciu kubectl
 Zeby odpalic aplikacje trzeba uzyc podanych komend:
 
 ```sh
@@ -66,7 +78,7 @@ kubectl apply -k ./efarm-backend/kustomize/overlays/dev/
 kubectl apply -k ./efarm-frontend/kustomize/overlays/dev/
 ```
 
-### Aktualizacja aplikacji przy uzyciu Helm
+### Aktualizacja aplikacji przy uzyciu kubectl
 Zeby usunac aplikacje gdy nie jest potrzebna lub dla bezpieczenstwa zamiast od razu apply dla updatu np. dla backendu:
 
 ```sh
@@ -100,7 +112,7 @@ Zeby wejsc do konteneru tak jak to mozna z docker exec trzeba:
 kubectl exec -it -n <namespace> <pod-name> -- sh
 ```
 
-gdzie dostepne namespace to **mysql**, **backend**, **frontend** a pod name dla mysql to efarm-mysql-0 jednak dla backendu i frontendu jest rozne za kazdym apply
+gdzie dostepne namespace to **mysql**, **backend**, **frontend** a pod name dla mysql to efarm-mysql-0 jednak dla backendu i frontendu jest rozne za kazdym apply i mozna je znalesc z poleceniem get pods
 
 ### Zarzadzanie klastrem
 
